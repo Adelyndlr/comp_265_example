@@ -31,11 +31,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
   - Template Views
     - FormPage
     - MediaPlayer (Image Viewer, Video)
-    - ConservationView
+    - ConversationView
       - TextInputTray at the bottom
       - ListView
         - Chat Message Bubbles
-          - isMine: bool
+          - isMine: bool // Controls whether the message is displayed on the right or left side
     - CommentTree
 */
 
@@ -72,27 +72,33 @@ Goal for Today:
     - subtitle: string
     - successContent: <Elements>
     - retryCallback: function
+    - loadingMessage: string
     - errorMessage: string
     - emptyMessage: string
-    - loadingMessage: string
 */
 
-function DataPanel({ state, successContent }) {
+function DataPanel({ state, title, subtitle, successContent, loadingMessage, errorMessage, emptyMessage }) {
     // If someone forgets to set `state`
     state = state || "empty";
 
+    title = title || "Empty State";
+    subtitle = subtitle || "No content available";
+
+    errorMessage = errorMessage || "Something went wrong. Please try again.";
+    emptyMessage = emptyMessage || "Nothing here yet.";
+    loadingMessage = loadingMessage || "Loading…";
+
     return (
         <>
-            {state === "loading" && <Card title="Loading State" subtitle="Use when the app is waiting for data.">
+            {state === "loading" && <Card title={title} subtitle={subtitle}>
                 <ActivityIndicator />
-                <ThemedText style={styles.muted}>Loading…</ThemedText>
+                <ThemedText style={styles.muted}>{loadingMessage}</ThemedText>
             </Card>}
 
-            {state === "error" && <Card title="Error State" subtitle="Use when something failed. Keep it human, and offer recovery.">
+            {state === "error" && <Card title={title} subtitle={subtitle}>
                 <ThemedView style={styles.errorBox}>
-                    <ThemedText style={styles.errorTitle}>Something went wrong</ThemedText>
                     <ThemedText style={styles.errorMessage}>
-                        The server is having trouble. Please try again.
+                        {errorMessage}
                     </ThemedText>
 
                     <Pressable
@@ -104,14 +110,15 @@ function DataPanel({ state, successContent }) {
                 </ThemedView>
             </Card>}
 
-            {state === "empty" && <Card title="Empty State" subtitle="Use when the app is working, but there's nothing to show.">
+            {state === "empty" && <Card title={title} subtitle={subtitle}>
                 <ThemedText style={styles.muted}>
-                    Nothing here yet.
+                    {emptyMessage}
                 </ThemedText>
-                <ThemedText style={styles.mutedSmall}>Try a different search or create a new item.</ThemedText>
             </Card>}
 
-            {state === "success" && successContent}
+            {state === "success" && <Card title={title} subtitle={subtitle}>
+                {successContent}
+            </Card>}
         </>
 
     )
@@ -124,41 +131,9 @@ function DataPanel({ state, successContent }) {
  * - Includes a few extra primitives (TextInput, Switch, Image, Pressable)
  */
 export default function KitchenSinkStatesScreen() {
-    const [isOnline, setIsOnline] = useState(true);
-    const [query, setQuery] = useState("");
-
     const state = "loading"; // loading | error | empty | success
 
-    const successContent = <ThemedView style={styles.card}>
-        <ThemedText style={styles.h2}>Success State</ThemedText>
-        <ThemedText style={styles.p}>
-            Use when you have data. Here we show a simple “profile” card.
-        </ThemedText>
-
-        <ThemedView style={styles.profile}>
-            <Image
-                source={{ uri: "https://picsum.photos/100" }}
-                style={styles.avatar}
-            />
-            <ThemedView style={{ flex: 1 }}>
-                <ThemedText style={styles.profileName}>Taylor Example</ThemedText>
-                <ThemedText style={styles.mutedSmall}>Product Designer • Regina</ThemedText>
-
-                <ThemedView style={styles.tagsRow}>
-                    <Tag label="Calm UI" />
-                    <Tag label="Readable" />
-                    <Tag label="Consistent" />
-                </ThemedView>
-            </ThemedView>
-        </ThemedView>
-
-        <Pressable
-            style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-            onPress={() => Alert.alert("Action", "Primary actions should be obvious.")}
-        >
-            <ThemedText style={styles.buttonText}>Primary Action</ThemedText>
-        </Pressable>
-    </ThemedView>
+    const successContent = <ProfileExample />;
 
     return (
         <SafeAreaView style={styles.page}>
@@ -170,33 +145,9 @@ export default function KitchenSinkStatesScreen() {
                         represent loading, error, empty, and success states.
                     </ThemedText>
 
-                    <DataPanel></DataPanel>
+                    <DataPanel state={state} successContent={successContent}></DataPanel>
 
-
-                    {/* Small "controls" area to show inputs */}
-                    <ThemedView style={styles.card}>
-                        <ThemedText style={styles.h2}>Controls</ThemedText>
-
-                        <ThemedText style={styles.label}>Search</ThemedText>
-                        <TextInput
-                            value={query}
-                            onChangeText={setQuery}
-                            placeholder="Type something…"
-                            style={styles.input}
-                        />
-
-                        <ThemedView style={styles.row}>
-                            <ThemedText style={styles.label}>Online</ThemedText>
-                            <Switch value={isOnline} onValueChange={setIsOnline} />
-                        </ThemedView>
-
-                        <Pressable
-                            style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-                            onPress={() => Alert.alert("Pressed", "Buttons should give feedback.")}
-                        >
-                            <ThemedText style={styles.buttonText}>Pressable Example</ThemedText>
-                        </Pressable>
-                    </ThemedView>
+                    <ControlsExample></ControlsExample>
 
                     <ThemedText style={styles.footer}>
                         Next step: refactor each state card into a reusable DataPanel component.
@@ -213,6 +164,70 @@ function Tag({ label }) {
             <ThemedText style={styles.tagText}>{label}</ThemedText>
         </ThemedView>
     );
+}
+
+function ProfileExample() {
+    return (
+        <>
+            <ThemedView style={styles.profile}>
+                <Image
+                    source={{ uri: "https://picsum.photos/100" }}
+                    style={styles.avatar}
+                />
+                <ThemedView style={{ flex: 1 }}>
+                    <ThemedText style={styles.profileName}>Taylor Example</ThemedText>
+                    <ThemedText style={styles.mutedSmall}>Product Designer • Regina</ThemedText>
+
+                    <ThemedView style={styles.tagsRow}>
+                        <Tag label="Calm UI" />
+                        <Tag label="Readable" />
+                        <Tag label="Consistent" />
+                    </ThemedView>
+                </ThemedView>
+            </ThemedView>
+
+            <Pressable
+                style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+                onPress={() => Alert.alert("Action", "Primary actions should be obvious.")}
+            >
+                <ThemedText style={styles.buttonText}>Primary Action</ThemedText>
+            </Pressable>
+        </>
+    )
+}
+
+function ControlsExample() {
+    const [isOnline, setIsOnline] = useState(true);
+    const [query, setQuery] = useState("");
+
+    return (
+        <>
+            <Card title="Form Control Examples" subtitle="Common input controls used in mobile apps.">
+                <ThemedView>
+                    <ThemedText style={styles.label}>Search</ThemedText>
+                    <TextInput
+                        value={query}
+                        onChangeText={setQuery}
+                        placeholder="Type something…"
+                        style={styles.input}
+                    />
+
+                </ThemedView>
+
+                <ThemedView style={styles.row}>
+                    <ThemedText style={styles.label}>Online</ThemedText>
+                    <Switch value={isOnline} onValueChange={setIsOnline} />
+                </ThemedView>
+
+                <Pressable
+                    style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+                    onPress={() => Alert.alert("Pressed", "Buttons should give feedback.")}
+                >
+                    <ThemedText style={styles.buttonText}>Pressable Example</ThemedText>
+                </Pressable>
+            </Card>
+        </>
+    )
 }
 
 const styles = StyleSheet.create({
