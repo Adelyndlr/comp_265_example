@@ -40,7 +40,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 */
 
 
-function Card({ title, subtitle, children }) {
+function Card({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
     return (
         <ThemedView style={styles.card}>
             <ThemedText style={styles.h2}>{title}</ThemedText>
