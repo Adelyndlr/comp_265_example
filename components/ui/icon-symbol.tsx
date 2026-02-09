@@ -18,8 +18,6 @@ const MAPPING = {
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
   'text.page.badge.magnifyingglass': 'search',
-
-
   'sun.horizon': 'sunny',
   'cloud.sun.bolt.fill': 'thunderstorm',
   'cloud.snow': 'cloudy-snowing',

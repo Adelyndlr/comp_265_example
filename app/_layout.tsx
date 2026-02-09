@@ -1,27 +1,30 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { PaperProvider } from 'react-native-paper';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import { Tabs } from "expo-router";
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <PaperProvider>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-        </Stack>
-        <StatusBar style="auto" />
-      </PaperProvider>
-    </ThemeProvider>
+    <Tabs screenOptions={{ headerShown: false }}>
+      <Tabs.Screen name="index" options={{ tabBarItemStyle: { display: "none" } }} />
+      <Tabs.Screen name="(tabs)/home" options={{
+        title: "Home",
+        tabBarIcon: ({ color, focused }) => (
+          <IconSymbol
+            name={'house.fill'}
+            size={24}
+            color={color}
+          />
+        ),
+      }} />
+      <Tabs.Screen name="(tabs)/demos" options={{
+        title: "Demos",
+        tabBarIcon: ({ color, focused }) => (
+          <IconSymbol
+            name={'sun.horizon'}
+            size={24}
+            color={color}
+          />
+        ),
+      }} />
+    </Tabs>
   );
 }
