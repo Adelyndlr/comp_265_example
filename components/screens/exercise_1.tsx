@@ -4,6 +4,9 @@ import { Picker } from '@react-native-picker/picker';
 import { Spacing } from '@/constants/theme';
 
 const WeatherApp = () => {
+
+    console.log('WeatherApp Rendered');
+
     // App State (What temperature unit? What city?)
     const [unit, setUnit] = useState('C'); // 'C' for Celsius, 'F' for Fahrenheit
     const [selectedCity, setSelectedCity] = useState('Saskatoon'); // Default city
